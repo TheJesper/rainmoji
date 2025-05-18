@@ -1,0 +1,7 @@
+{
+  "banner": {
+    "source": ".coverlover/banners/default1.png",
+    "type": "static",
+    "fillMode": true
+  }
+}

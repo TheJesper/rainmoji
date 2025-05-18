@@ -1,0 +1,55 @@
+<!-- public/demo.html v0.0.1 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EmojiStorm Demo</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+    .rain-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 10;
+    }
+    button {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 20;
+      padding: 10px 20px;
+      font-size: 14px;
+      margin-right: 10px;
+      cursor: pointer;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      opacity: 0.9;
+      transition: opacity 0.3s;
+    }
+    button:hover {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <style>
+    button {
+      z-index: 20;
+      pointer-events: auto;
+    }
+  </style>
+  <!-- Webpack will inject scripts here -->
+</body>
+</html>
