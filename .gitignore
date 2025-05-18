@@ -16,3 +16,9 @@ package-lock.json
 *.swo
 .DS_Store
 Thumbs.db
+
+# Claude Code settings
+.claude/
+
+# Delete folder - temporary files
+delete/

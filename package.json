@@ -9,8 +9,7 @@
         "build": "webpack --mode production",
         "lint": "eslint . --ext .ts,.tsx",
         "demo": "webpack serve --mode development",
-        "full-demo": "webpack serve --mode development",
-        "full-demo-direct": "node scripts/launchFullDemo.js"
+        "original-demo-direct": "node scripts/runOriginalDemo.js"
     },
     "author": "Conzeon AB Jesper Wilfing <2024>",
     "license": "MIT",

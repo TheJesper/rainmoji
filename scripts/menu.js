@@ -29,10 +29,10 @@ const menuItems = [
   },
   {
     key: '3',
-    icon: '🌈',
-    title: 'Full Control Panel Demo',
-    description: 'The comprehensive demo with control panel I created',
-    command: 'npm run full-demo-direct',
+    icon: '🌟',
+    title: 'Original Demo (Advanced)',
+    description: 'Run the original CSS animated demo with parallax effects',
+    command: 'npm run original-demo-direct',
     blocking: true
   },
   {
