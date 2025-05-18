@@ -38,6 +38,7 @@
       line-height: 1;
       transform-origin: center center;
       animation: spin linear infinite;
+      transition: opacity 0.5s ease-out;
     }
     @keyframes fall {
       0% {
@@ -53,6 +54,14 @@
       }
       100% {
         transform: rotate(360deg);
+      }
+    }
+    @keyframes fadeout {
+      0% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
       }
     }
     .controls-container {
@@ -521,8 +530,17 @@
 
     const showSingleEmoji = (emojiSet) => {
       const rainContainer = document.getElementById("rainContainer");
-      const emoji = createEmoji(emojiSet);
+      // Create emoji at the center but set it to fall after a short delay
+      const emoji = createEmoji(emojiSet, false); // false means not dropping initially
       rainContainer.appendChild(emoji);
+      
+      // After showing in the center for a moment, start the drop animation
+      setTimeout(() => {
+        emoji.style.top = "-50px";
+        emoji.style.left = `${Math.random() * window.innerWidth}px`;
+        emoji.style.transform = "";
+        emoji.style.animationDuration = `${convertSpeedToFallDuration(5)}s`;
+      }, 1000);
     };
 
     const dropSingleEmoji = (emojiSet) => {
@@ -552,12 +570,24 @@
 
     const clearEmojis = () => {
       const rainContainer = document.getElementById("rainContainer");
-      rainContainer.innerHTML = "";
+      const emojis = rainContainer.querySelectorAll('.emoji');
+      
       if (frontInterval) {
         clearInterval(frontInterval);
         frontInterval = null;
         frontRemaining = 0;
       }
+      
+      // Add fadeout animation to each emoji with random duration
+      emojis.forEach(emoji => {
+        const fadeOutDuration = getRandomValue(0.2, 0.8);
+        emoji.style.animation = `fadeout ${fadeOutDuration}s ease-out forwards`;
+        
+        // Remove elements after they've faded out
+        setTimeout(() => {
+          emoji.remove();
+        }, fadeOutDuration * 1000);
+      });
     };
 
     // UI Control event listeners
