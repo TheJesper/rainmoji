@@ -9,7 +9,6 @@ module.exports = {
   entry: {
     main: './src/index.tsx',
     demo: './src/index.tsx', // Using the same entry for demo; alternatively, create a separate entry if needed
-    fullDemo: './src/index.tsx', // Entry for full demo
   },
   output: {
     filename: '[name].bundle.js',
@@ -45,7 +44,6 @@ module.exports = {
     onListening: function(server) {
       const port = server.options.port;
       console.log(`\n🌟 Demo is running at: http://localhost:${port}/demo.html`);
-      console.log(`🌈 Full Demo is running at: http://localhost:${port}/fullDemo.html`);
       console.log(`📖 Main page at: http://localhost:${port}/`);
       console.log(`\nPlease open these URLs in your browser.`);
     },
@@ -64,12 +62,6 @@ module.exports = {
       template: './public/demo.html',
       chunks: ['demo'],
       inject: true
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'fullDemo.html',
-      template: './public/fullDemo.html',
-      chunks: ['fullDemo'],
-      inject: false
     }),
   ],
   optimization: {
