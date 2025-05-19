@@ -5,10 +5,10 @@
     "main": "dist/components/EmojiStorm.js",
     "scripts": {
         "menu": "node scripts/menu.js",
-        "start": "webpack serve --mode development",
-        "build": "webpack --mode production",
-        "lint": "eslint . --ext .ts,.tsx",
-        "demo": "webpack serve --mode development",
+        "start": "npx webpack serve --mode development",
+        "build": "npx webpack --mode production",
+        "lint": "npx eslint . --ext .ts,.tsx",
+        "demo": "npx webpack serve --mode development",
         "original-demo-direct": "node scripts/runOriginalDemo.js"
     },
     "author": "Conzeon AB Jesper Wilfing <2024>",
@@ -37,7 +37,7 @@
         "ts-loader": "^8.0.18",
         "typescript": "^4.2.3",
         "webpack": "^5.24.2",
-        "webpack-cli": "^4.5.0",
-        "webpack-dev-server": "^3.11.2"
+        "webpack-cli": "^5.0.0",
+        "webpack-dev-server": "^5.2.1"
     }
 }

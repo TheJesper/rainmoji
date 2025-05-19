@@ -1,4 +1,4 @@
-// webpack.config.js v0.0.2
+// webpack.config.js v0.0.3
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
@@ -32,24 +32,27 @@ module.exports = {
     ],
   },
   devServer: {
-    contentBase: path.join(__dirname, 'public'),
+    static: {
+      directory: path.join(__dirname, 'public'),
+      publicPath: '/',
+      watch: true
+    },
     compress: true,
     port: getRandomPort(),
     open: false, // Disable auto-open due to WSL limitations
-    before: function(app, server) {
-      // Log server info on startup
-      const port = server.options.port || getRandomPort();
-      console.log(`\n🎉 Server will start on port: ${port}`);
+    client: {
+      logging: 'info',
     },
-    onListening: function(server) {
-      const port = server.options.port;
+    onListening: function(devServer) {
+      if (!devServer) {
+        throw new Error('webpack-dev-server is not defined');
+      }
+      const port = devServer.server.address().port;
+      console.log(`\n🎉 Server started on port: ${port}`);
       console.log(`\n🌟 Demo is running at: http://localhost:${port}/demo.html`);
       console.log(`📖 Main page at: http://localhost:${port}/`);
       console.log(`\nPlease open these URLs in your browser.`);
     },
-    // Ensure static HTML files are served correctly
-    contentBasePublicPath: '/',
-    watchContentBase: true
   },
   plugins: [
     new HtmlWebpackPlugin({

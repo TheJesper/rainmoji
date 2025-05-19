@@ -17,7 +17,14 @@
       "Bash(git push:*)",
       "Bash(mkdir:*)",
       "Bash(mv:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run lint)",
+      "Bash(npm test)",
+      "Bash(npx tsc:*)",
+      "Bash(npm start)",
+      "Bash(npm audit:*)",
+      "Bash(npm run:*)"
     ],
     "deny": []
   }
