@@ -15,6 +15,7 @@ const EmojiRain = ({
   const containerRef = useRef(null);
   const [emojis, setEmojis] = useState([]);
   const [frontInterval, setFrontInterval] = useState(null);
+  const [fadingEmojis, setFadingEmojis] = useState(new Set());
   const [isRaining, setIsRaining] = useState(false);
   
   // Configure initial values
@@ -141,9 +142,7 @@ const EmojiRain = ({
   };
 
   const triggerRain = () => {
-    if (isRaining) return;
-    
-    setIsRaining(true);
+    // Allow multiple triggers by not checking if already raining
     const count = 20;
     const newEmojis = [];
     
@@ -176,15 +175,12 @@ const EmojiRain = ({
         const interval = setInterval(() => {
           if (frontRemaining <= 0) {
             clearInterval(interval);
-            setFrontInterval(null);
           } else {
             const randomEmoji = emojiSet[Math.floor(Math.random() * emojiSet.length)];
             setEmojis(prev => [...prev, createEmoji(randomEmoji, true, 'front')]);
             frontRemaining--;
           }
         }, intervalTime);
-        
-        setFrontInterval(interval);
       }
     } else {
       for (let i = 0; i < count; i++) {
@@ -194,11 +190,6 @@ const EmojiRain = ({
     }
     
     setEmojis(prev => [...prev, ...newEmojis]);
-    
-    // Stop creating new emojis after duration
-    setTimeout(() => {
-      setIsRaining(false);
-    }, config.current.duration || 5000);
   };
 
   const showSingleEmoji = () => {
@@ -223,19 +214,24 @@ const EmojiRain = ({
     }
     setIsRaining(false);
     
-    // Fade out animation
-    containerRef.current?.querySelectorAll('.emoji').forEach(el => {
+    // Mark emojis for fading and remove them with staggered timing
+    const emojiIds = emojis.map(e => e.id);
+    setFadingEmojis(new Set(emojiIds));
+    
+    // Stagger the removal of emojis with random delays
+    emojiIds.forEach((id, index) => {
+      const delay = Math.random() * 500; // 0-500ms random delay
       const fadeOutDuration = getRandomValue(0.2, 0.8);
-      el.style.animation = `fadeout ${fadeOutDuration}s ease-out forwards`;
       
       setTimeout(() => {
-        el.remove();
-      }, fadeOutDuration * 1000);
+        setEmojis(prev => prev.filter(e => e.id !== id));
+      }, delay + (fadeOutDuration * 1000));
     });
     
+    // Clear the fading set after all animations
     setTimeout(() => {
-      setEmojis([]);
-    }, 800);
+      setFadingEmojis(new Set());
+    }, 1500);
   };
 
   // Clean up
@@ -321,6 +317,10 @@ const EmojiRain = ({
           top: -50px;
           animation: fall linear forwards;
           transform: translateY(-100%);
+          transition: opacity 0.5s ease-out;
+        }
+        .emoji.fading {
+          animation: fall linear forwards, fadeout var(--fade-duration) ease-out forwards;
         }
         .emoji-inner {
           display: inline-flex;
@@ -329,7 +329,6 @@ const EmojiRain = ({
           line-height: 1;
           transform-origin: center center;
           animation: spin linear infinite;
-          transition: opacity 0.5s ease-out;
         }
       `}</style>
       
@@ -349,7 +348,7 @@ const EmojiRain = ({
         {emojis.map(emoji => (
           <div
             key={emoji.id}
-            className="emoji"
+            className={`emoji ${fadingEmojis.has(emoji.id) ? 'fading' : ''}`}
             style={{
               left: `${emoji.x}px`,
               top: emoji.drop ? `-50px` : `${emoji.y}px`,
@@ -357,7 +356,8 @@ const EmojiRain = ({
               zIndex: emoji.zIndex,
               animationDuration: emoji.drop ? `${emoji.fallDuration}s` : '0s',
               animationDelay: `${emoji.delay}s`,
-              animationName: emoji.drop && emoji.fallDuration > 0 ? 'fall' : 'none'
+              animationName: emoji.drop && emoji.fallDuration > 0 ? 'fall' : 'none',
+              '--fade-duration': fadingEmojis.has(emoji.id) ? `${getRandomValue(0.2, 0.8)}s` : '0s'
             }}
           >
             <div
