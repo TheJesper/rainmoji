@@ -137,7 +137,8 @@ const EmojiRain = ({
       blur: blurEnabled ? blurAmount : 0,
       zIndex,
       drop,
-      spinDuration: getRandomValue(2, 4)
+      spinDuration: getRandomValue(2, 4),
+      createdAt: Date.now()
     };
   };
 
@@ -234,14 +235,42 @@ const EmojiRain = ({
     }, 1500);
   };
 
-  // Clean up
+  // Clean up off-screen emojis for memory management
   useEffect(() => {
+    const cleanupOffScreenEmojis = () => {
+      const now = Date.now();
+      
+      setEmojis(prev => prev.filter(emoji => {
+        // Keep emojis that are still visible or being faded out
+        if (fadingEmojis.has(emoji.id)) return true;
+        if (!emoji.drop) return true;
+        
+        // Calculate actual position based on animation timing
+        const timeElapsed = (now - emoji.createdAt - emoji.delay * 1000) / 1000;
+        
+        if (timeElapsed < 0) return true; // Animation hasn't started yet
+        
+        const progress = timeElapsed / emoji.fallDuration;
+        const estimatedY = -50 + (window.innerHeight + 200) * progress;
+        
+        // Remove emojis that have fallen below screen + buffer
+        return estimatedY < window.innerHeight + 200;
+      }));
+    };
+
+    // Run cleanup every 2 seconds
+    const cleanupInterval = setInterval(cleanupOffScreenEmojis, 2000);
+
     return () => {
+      clearInterval(cleanupInterval);
       if (frontInterval) {
         clearInterval(frontInterval);
       }
+      if (continuousRainInterval) {
+        clearInterval(continuousRainInterval);
+      }
     };
-  }, [frontInterval]);
+  }, [frontInterval, continuousRainInterval, fadingEmojis]);
 
   // Auto play
   useEffect(() => {
@@ -318,6 +347,7 @@ const EmojiRain = ({
           animation: fall linear forwards;
           transform: translateY(-100%);
           transition: opacity 0.5s ease-out;
+          will-change: transform, opacity;
         }
         .emoji.fading {
           animation: fall linear forwards, fadeout var(--fade-duration) ease-out forwards;
@@ -329,13 +359,16 @@ const EmojiRain = ({
           line-height: 1;
           transform-origin: center center;
           animation: spin linear infinite;
+          will-change: transform;
         }
       `}</style>
       
       {showControls && (
         <div style={styles.controlsContainer}>
-          <button style={styles.button} onClick={triggerRain}>Make it Rain!</button>
+          <button style={styles.button} onClick={() => triggerRain()}>Make it Rain!</button>
           <button style={styles.button} onClick={showSingleEmoji}>Show Single Emoji</button>
+          <button style={styles.button} onClick={startContinuousRain}>Start Continuous Rain</button>
+          <button style={styles.button} onClick={stopRain}>Stop Rain</button>
           <button style={styles.button} onClick={clearEmojis}>Clear Emojis</button>
         </div>
       )}
