@@ -1,8 +1,10 @@
-// parallaxConfig.js v0.0.1
-export const parallaxConfig = {
+// parallaxConfig.ts - Configuration for parallax layers
+import { ParallaxConfig } from '../types/emoji.types';
+
+export const parallaxConfig: ParallaxConfig = {
   layerProperties: {
     front: {
-      speedRange: [0, 0],
+      speedRange: [0, 2],
       blurRange: [1, 2],
       zIndex: 3,
       fontSizeRange: [48, 72],

@@ -1,5 +1,6 @@
-# EmojiStorm
-A fun and configurable emoji rain effect with parallax layers for React projects.
+# Emoji Rain Parallax
+
+A performant React component for creating beautiful emoji rain animations with parallax effects.
 
 ## Installation
 ```bash

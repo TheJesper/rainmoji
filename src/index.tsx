@@ -1,10 +1,11 @@
-// src/index.tsx v0.0.1
+// src/index.tsx v0.0.3
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import EmojiRain from './components/EmojiRain.jsx';
-import './styles.css'; // Optional: Create if you have additional styles
+import EmojiRain from './components/EmojiRain';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import './styles.css';
 
-const App = () => {
+const App: React.FC = () => {
   const items = [
     '🌟',
     '💫',
@@ -15,8 +16,21 @@ const App = () => {
     '🌈',
   ];
 
-  return <EmojiRain emojiSet={items} />;
+  return (
+    <ErrorBoundary>
+      <EmojiRain emojiSet={items} autoPlay={true} />
+    </ErrorBoundary>
+  );
 };
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-root.render(<App />);
+const rootElement = document.getElementById('root');
+if (!rootElement) {
+  throw new Error('Root element not found');
+}
+
+const root = ReactDOM.createRoot(rootElement);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);

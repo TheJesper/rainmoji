@@ -24,7 +24,9 @@
       "Bash(npx tsc:*)",
       "Bash(npm start)",
       "Bash(npm audit:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)"
     ],
     "deny": []
   }

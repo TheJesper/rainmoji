@@ -50,6 +50,7 @@ module.exports = {
       const port = devServer.server.address().port;
       console.log(`\n🎉 Server started on port: ${port}`);
       console.log(`\n🌟 Demo is running at: http://localhost:${port}/demo.html`);
+      console.log(`✨ Z-Index Interactive Demo: http://localhost:${port}/z-index-demo.html`);
       console.log(`📖 Main page at: http://localhost:${port}/`);
       console.log(`\nPlease open these URLs in your browser.`);
     },
@@ -65,6 +66,12 @@ module.exports = {
       template: './public/demo.html',
       chunks: ['demo'],
       inject: true
+    }),
+    new HtmlWebpackPlugin({
+      filename: 'z-index-demo.html',
+      template: './public/z-index-demo.html',
+      chunks: ['main'],
+      inject: 'body'
     }),
   ],
   optimization: {

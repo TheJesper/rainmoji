@@ -1,0 +1,5 @@
+-You have access to web search, filesystem, terminal (everything)
+-Dont create temporary scripts to fix stuff, you can do it yourself
+-You have web access, make sure to check up all latest lib versions so we dont use legacy! Avoid legacy at all costs.
+-No need to describe the issue and then how you fix it in more than one scentence, we do need to save tokens
+-Dont use standard ports, default is already picked
