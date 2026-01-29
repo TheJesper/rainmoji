@@ -35,6 +35,9 @@
         "build": "npx webpack --config webpack.prod.config.js",
         "build:dev": "npx webpack --mode development",
         "build:analyze": "npx webpack --config webpack.prod.config.js --analyze",
+        "build:widget": "npx webpack --config webpack.widget.config.js",
+        "build:all": "npm run build && npm run build:widget",
+        "widget-demo": "npx webpack serve --mode development --open widget-demo.html",
         "lint": "npx eslint . --ext .ts,.tsx",
         "lint:fix": "npx eslint . --ext .ts,.tsx --fix",
         "typecheck": "npx tsc --noEmit",
@@ -42,7 +45,7 @@
         "demo": "npx webpack serve --mode development",
         "original-demo-direct": "node scripts/runOriginalDemo.js",
         "z-index-demo": "npx webpack serve --mode development --open z-index-demo.html",
-        "prepublishOnly": "npm run lint && npm run typecheck && npm run build"
+        "prepublishOnly": "npm run lint && npm run typecheck && npm run build:all"
     },
     "author": "Conzeon AB Jesper Wilfing <2024>",
     "license": "MIT",

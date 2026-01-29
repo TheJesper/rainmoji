@@ -54,7 +54,9 @@ export class PerformanceMonitor {
     
     if ('memory' in performance && (performance as PerformanceWithMemory).memory) {
       const memoryInfo = (performance as PerformanceWithMemory).memory;
-      metrics.memoryUsed = Math.round(memoryInfo.usedJSHeapSize / 1048576); // Convert to MB
+      if (memoryInfo) {
+        metrics.memoryUsed = Math.round(memoryInfo.usedJSHeapSize / 1048576); // Convert to MB
+      }
     }
     
     this.callbacks.forEach(callback => callback(metrics));

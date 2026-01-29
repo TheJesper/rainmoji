@@ -102,13 +102,45 @@ const menuItems = [
   },
   {
     key: '8',
+    icon: '🎨',
+    title: 'Widget Generator Demo',
+    description: 'Interactive widget generator & code exporter',
+    command: 'npm run widget-demo',
+    blocking: true
+  },
+  {
+    key: '9',
+    icon: '📄',
+    title: 'Z-Index Demo',
+    description: 'Test emoji layering with interactive z-index controls',
+    command: 'npm run z-index-demo',
+    blocking: true
+  },
+  {
+    key: 'A',
+    icon: '📦',
+    title: 'Build Widget',
+    description: 'Build standalone widget for CDN distribution',
+    command: 'npm run build:widget',
+    blocking: false
+  },
+  {
+    key: 'B',
+    icon: '🚀',
+    title: 'Build All',
+    description: 'Build React component + standalone widget',
+    command: 'npm run build:all',
+    blocking: false
+  },
+  {
+    key: 'C',
     icon: '📖',
     title: 'View Documentation',
     description: 'Open project README',
     action: openReadme
   },
   {
-    key: '9',
+    key: 'D',
     icon: '🔄',
     title: 'Clean & Rebuild',
     description: 'Remove dist folder and rebuild',

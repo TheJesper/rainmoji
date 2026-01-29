@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emoji Rain - Integration Example</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+
+    .content {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      color: #667eea;
+      margin-bottom: 20px;
+    }
+
+    .code-block {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      max-width: 500px;
+      width: 90%;
+      position: relative;
+      z-index: 1000;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 28px;
+      cursor: pointer;
+      color: #999;
+    }
+
+    .modal-close:hover {
+      color: #333;
+    }
+
+    button {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 10px 5px;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    .info-box {
+      background: #f8f9fa;
+      border-left: 4px solid #667eea;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <h1>🌧️ Emoji Rain - Integration Example</h1>
+    
+    <p>This page demonstrates the standalone Emoji Rain widget in action. Notice how the emoji rain respects z-index layering with the modal!</p>
+
+    <div class="info-box">
+      <strong>💡 Current Setup:</strong>
+      <ul>
+        <li>Container Z-Index: 10</li>
+        <li>Modal Z-Index: 999</li>
+        <li>Result: Emojis appear behind the modal</li>
+      </ul>
+    </div>
+
+    <h2>Try It Out:</h2>
+    <button onclick="rainInstance.triggerRain()">🌧️ Make it Rain!</button>
+    <button onclick="rainInstance.dropSingleEmoji()">💫 Single Emoji</button>
+    <button onclick="rainInstance.clearEmojis()">🧹 Clear</button>
+    <button onclick="openModal()">🎭 Open Modal</button>
+
+    <h2>Installation Code:</h2>
+    <div class="code-block">
+&lt;!-- Add this to your HTML --&gt;
+&lt;script src="https://cdn.jsdelivr.net/gh/yourusername/emoji-rain-parallax@latest/dist/widget.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  const rain = EmojiRain.init({
+    emojis: ['🌟', '💫', '✨', '🎉', '🎊', '⭐', '🌈'],
+    containerZIndex: 10,
+    showControls: false,
+    autoPlay: false
+  });
+&lt;/script&gt;
+    </div>
+
+    <h2>Programmatic Control:</h2>
+    <div class="code-block">
+// Trigger rain manually
+rain.triggerRain();
+
+// Drop single emoji
+rain.dropSingleEmoji();
+
+// Clear all emojis
+rain.clearEmojis();
+
+// Clean up (removes container and controls)
+rain.destroy();
+    </div>
+
+    <h2>Z-Index Examples:</h2>
+    <ul>
+      <li><strong>Behind modals:</strong> <code>containerZIndex: 10</code></li>
+      <li><strong>Above most content:</strong> <code>containerZIndex: 100</code></li>
+      <li><strong>Above everything:</strong> <code>containerZIndex: 9999</code></li>
+    </ul>
+  </div>
+
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      <h2 style="color: #667eea;">🎭 Modal Example</h2>
+      <p>Notice how the emoji rain appears behind this modal because the modal has a higher z-index (999) than the container (10).</p>
+      <p>To make emojis appear on top of modals, increase the <code>containerZIndex</code> value.</p>
+      <button onclick="closeModal()" style="width: 100%; margin-top: 20px;">Close</button>
+    </div>
+  </div>
+
+  <!-- Emoji Rain Widget -->
+  <script src="../dist/widget.min.js"></script>
+  <script>
+    // Initialize the widget
+    const rainInstance = EmojiRain.init({
+      emojis: ['🌟', '💫', '✨', '🎉', '🎊', '⭐', '🌈'],
+      containerZIndex: 10,
+      baseSpeed: 50,
+      showControls: false,
+      autoPlay: false,
+      parallaxEnabled: true,
+      blurEnabled: true
+    });
+
+    function openModal() {
+      document.getElementById('modal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modal').classList.remove('active');
+    }
+
+    // Auto-trigger rain on load for demo purposes
+    setTimeout(() => {
+      rainInstance.triggerRain();
+    }, 1000);
+  </script>
+</body>
+</html>

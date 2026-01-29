@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Widget Test</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .content {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      text-align: center;
+    }
+    h1 { color: #667eea; }
+    button {
+      padding: 15px 30px;
+      margin: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { transform: translateY(-2px); }
+    .status {
+      margin-top: 30px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <h1>🌧️ Widget Test</h1>
+    <p>Testing the standalone Emoji Rain widget!</p>
+    
+    <button onclick="testRain()">🌧️ Make it Rain!</button>
+    <button onclick="testSingle()">💫 Single Emoji</button>
+    <button onclick="testClear()">🧹 Clear All</button>
+    
+    <div class="status">
+      <h3>Status:</h3>
+      <div id="status">Initializing...</div>
+    </div>
+  </div>
+
+  <!-- Load the widget -->
+  <script src="../dist/widget.min.js"></script>
+  <script>
+    const statusEl = document.getElementById('status');
+    
+    try {
+      // Initialize widget
+      const rain = EmojiRain.init({
+        emojis: ['🌟', '💫', '✨', '🎉', '🎊', '⭐', '🌈'],
+        containerZIndex: 10,
+        showControls: false,
+        autoPlay: false,
+        baseSpeed: 50,
+        parallaxEnabled: true,
+        blurEnabled: true
+      });
+      
+      statusEl.innerHTML = `
+        ✅ Widget loaded successfully!<br>
+        📦 Version: ${EmojiRain.version}<br>
+        🎯 Instance: ${rain ? 'Created' : 'Failed'}<br>
+        🌐 Exposed to window: ${window.emojiRainInstance ? 'Yes' : 'No'}
+      `;
+      
+      // Test functions
+      window.testRain = function() {
+        rain.triggerRain();
+        statusEl.innerHTML += '<br>🌧️ Triggered rain!';
+      };
+      
+      window.testSingle = function() {
+        rain.dropSingleEmoji();
+        statusEl.innerHTML += '<br>💫 Dropped single emoji!';
+      };
+      
+      window.testClear = function() {
+        rain.clearEmojis();
+        statusEl.innerHTML += '<br>🧹 Cleared all emojis!';
+      };
+      
+    } catch (error) {
+      statusEl.innerHTML = `
+        ❌ Error loading widget:<br>
+        ${error.message}
+      `;
+      statusEl.style.color = 'red';
+    }
+  </script>
+</body>
+</html>

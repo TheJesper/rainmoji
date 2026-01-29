@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emoji Rain - Widget Generator</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+      background: #FAFAFA;
+      color: #212121;
+      font-size: 13px;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      height: 100vh;
+      gap: 0;
+    }
+
+    /* LEFT PANEL - CONFIG */
+    .config-panel {
+      background: #FFFFFF;
+      border-right: 1px solid #E0E0E0;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .header {
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #E0E0E0;
+    }
+
+    .header h1 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #212121;
+      margin-bottom: 4px;
+    }
+
+    .header p {
+      font-size: 11px;
+      color: #757575;
+    }
+
+    /* SECTIONS */
+    .section {
+      background: #FFFFFF;
+      border: 1px solid #E0E0E0;
+      border-radius: 4px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #212121;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .section-title img {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* FORM CONTROLS */
+    label {
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      color: #424242;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    label input[type="checkbox"] {
+      margin-right: 6px;
+      width: 14px;
+      height: 14px;
+      accent-color: #2196F3;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      background: #FFFFFF;
+      border: 1px solid #E0E0E0;
+      padding: 5px 8px;
+      font-size: 12px;
+      border-radius: 3px;
+      font-family: inherit;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: #2196F3;
+      box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+    }
+
+    input[type="number"] {
+      width: 60px;
+    }
+
+    .input-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .input-group label {
+      margin: 0;
+      flex: 1;
+    }
+
+    /* BUTTONS */
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 3px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn img {
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-primary {
+      background: #2196F3;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1976D2;
+    }
+
+    .btn-secondary {
+      background: #FFFFFF;
+      color: #424242;
+      border: 1px solid #E0E0E0;
+    }
+
+    .btn-secondary:hover {
+      background: #F5F5F5;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* EMOJI PICKER */
+    .emoji-input-wrapper {
+      margin-bottom: 8px;
+    }
+
+    #emojiInput {
+      font-size: 18px;
+      line-height: 1.4;
+      padding: 8px;
+      min-height: 44px;
+    }
+
+    .preset-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .btn-preset {
+      padding: 4px 8px;
+      font-size: 11px;
+      text-align: left;
+    }
+
+    /* LAYER GRIDS */
+    .layer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .layer-item {
+      background: #F9F9F9;
+      border: 1px solid #E0E0E0;
+      border-radius: 3px;
+      padding: 6px;
+    }
+
+    .layer-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: #424242;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    .layer-input {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 4px;
+      font-size: 10px;
+    }
+
+    .layer-input span {
+      flex: 1;
+      color: #757575;
+    }
+
+    .layer-input input {
+      width: 45px;
+      padding: 3px 4px;
+      font-size: 10px;
+    }
+
+    /* RIGHT PANEL - PREVIEW */
+    .preview-panel {
+      position: relative;
+      background: #F0F0F0;
+      overflow: hidden;
+    }
+
+    .preview-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      border-bottom: 1px solid #E0E0E0;
+      padding: 12px 16px;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .preview-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #212121;
+    }
+
+    .preview-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    #emojiContainer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 10;
+    }
+
+    /* EMOJI ANIMATIONS */
+    .emoji {
+      position: absolute;
+      top: -50px;
+      animation: fall linear forwards;
+      transform: translateY(-100%);
+    }
+
+    .emoji-inner {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transform-origin: center center;
+      animation: spin linear infinite;
+      transition: opacity 0.5s ease-out;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-50px); }
+      100% { transform: translateY(120vh); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* MODAL */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 24px;
+      border-radius: 4px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      z-index: 1000;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 24px;
+      cursor: pointer;
+      color: #757575;
+    }
+
+    .modal-close:hover {
+      color: #212121;
+    }
+
+    /* CODE OUTPUT */
+    .code-output {
+      background: #1E1E1E;
+      color: #D4D4D4;
+      padding: 16px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      overflow-x: auto;
+      margin: 12px 0;
+      position: relative;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      padding: 4px 10px;
+      background: #2196F3;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+
+    .copy-btn.copied {
+      background: #4CAF50;
+    }
+
+    /* HELP TEXT */
+    .help-text {
+      font-size: 10px;
+      color: #757575;
+      margin-top: 4px;
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #F5F5F5;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #BDBDBD;
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #9E9E9E;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- LEFT PANEL: CONFIG -->
+    <div class="config-panel">
+      <div class="header">
+        <h1>🌧️ Emoji Rain Generator</h1>
+        <p>Configure and generate your widget code</p>
+      </div>
+
+      <!-- EMOJI SELECTION -->
+      <div class="section">
+        <div class="section-title">
+          🎨 Emoji Selection
+        </div>
+        <div class="emoji-input-wrapper">
+          <textarea 
+            id="emojiInput" 
+            placeholder="🎉 🎊 🎁 🎈 🎀 ✨ 🌟"
+          >🎉 🎊 🎁 🎈 🎀 ✨ 🌟 ⭐</textarea>
+          <div class="help-text">Edit emojis directly or use presets below</div>
+        </div>
+        <div class="preset-buttons">
+          <button class="btn btn-secondary btn-preset" onclick="loadPreset('party')">🎉 Party</button>
+          <button class="btn btn-secondary btn-preset" onclick="loadPreset('zen')">🧘 Zen</button>
+          <button class="btn btn-secondary btn-preset" onclick="loadPreset('maxCelebration')">🎊 Max!</button>
+          <button class="btn btn-secondary btn-preset" onclick="loadPreset('birthday')">🎂 Birthday</button>
+          <button class="btn btn-secondary btn-preset" onclick="loadPreset('vacation')">🏖️ Vacation</button>
+          <button class="btn btn-secondary btn-preset" onclick="loadPreset('vehicles')">🚗 Vehicles</button>
+          <button class="btn btn-secondary btn-preset" onclick="loadPreset('smileys')">😀 Smileys</button>
+        </div>
+      </div>
+
+      <!-- BASIC SETTINGS -->
+      <div class="section">
+        <div class="section-title">
+          <img src="/assets/icons/cog.png" alt="" /> Basic Settings
+        </div>
+        <label>
+          <input type="checkbox" id="parallaxCheckbox" checked>
+          Parallax Layers
+        </label>
+        <label>
+          <input type="checkbox" id="blurCheckbox">
+          Blur Effect
+        </label>
+        <div class="input-group">
+          <label style="flex: 1;">Base Speed</label>
+          <input type="number" id="baseSpeed" min="0" max="100" value="50">
+        </div>
+      </div>
+
+      <!-- CONTINUOUS MODE -->
+      <div class="section">
+        <div class="section-title">
+          <img src="/assets/icons/clock.png" alt="" /> Continuous Mode
+        </div>
+        <label>
+          <input type="checkbox" id="continuousMode">
+          Auto Rain
+        </label>
+        <div class="input-group">
+          <label style="flex: 1;">Spawn Rate (/sec)</label>
+          <input type="number" id="spawnRate" min="1" max="50" value="5">
+        </div>
+        <div class="input-group">
+          <label style="flex: 1;">Max Emojis</label>
+          <input type="number" id="maxEmojis" min="10" max="500" value="100">
+        </div>
+        <div class="help-text">Active: <span id="activeCount">0</span> emojis</div>
+      </div>
+
+      <!-- LAYER DISTRIBUTION -->
+      <div class="section">
+        <div class="section-title">
+          <img src="/assets/icons/layers.png" alt="" /> Layer Distribution
+        </div>
+        <div class="input-group">
+          <label style="flex: 1;">Front</label>
+          <input type="number" id="frontRatio" min="0" max="1000" value="100">
+        </div>
+        <div class="input-group">
+          <label style="flex: 1;">Middle</label>
+          <input type="number" id="middleRatio" min="0" max="1000" value="300">
+        </div>
+        <div class="input-group">
+          <label style="flex: 1;">Back</label>
+          <input type="number" id="backRatio" min="0" max="1000" value="70">
+        </div>
+      </div>
+
+      <!-- Z-INDEX CONTROL -->
+      <div class="section">
+        <div class="section-title">
+          <img src="/assets/icons/arrow_up.png" alt="" /> Z-Index
+        </div>
+        <div class="input-group">
+          <label style="flex: 1;">Container</label>
+          <input type="number" id="containerZIndex" min="0" max="999999" value="10">
+        </div>
+        <div class="input-group">
+          <label style="flex: 1;">Modal (test)</label>
+          <input type="number" id="modalZIndex" min="0" max="999999" value="999">
+        </div>
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="section">
+        <div class="section-title">
+          <img src="/assets/icons/control_play.png" alt="" /> Actions
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="makeItRain()">
+            <img src="/assets/icons/lightning.png" alt="" /> Rain
+          </button>
+          <button class="btn btn-secondary" onclick="dropSingle()">Single</button>
+          <button class="btn btn-secondary" onclick="rainFew()">Few</button>
+          <button class="btn btn-secondary" onclick="clearAll()">
+            <img src="/assets/icons/broom.png" alt="" /> Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- GENERATE CODE -->
+      <div class="section">
+        <button class="btn btn-primary" onclick="generateCode()" style="width: 100%;">
+          <img src="/assets/icons/script_code.png" alt="" /> Generate Widget Code
+        </button>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: PREVIEW -->
+    <div class="preview-panel">
+      <div class="preview-header">
+        <div class="preview-title">Live Preview</div>
+        <div class="preview-actions">
+          <button class="btn btn-secondary" onclick="openModal()">Test Modal</button>
+        </div>
+      </div>
+      <div id="emojiContainer"></div>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div id="testModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      <h2 style="margin-bottom: 16px;">Z-Index Test Modal</h2>
+      <p style="margin-bottom: 16px; line-height: 1.6;">
+        This modal tests z-index layering. Adjust the z-index values to see emojis 
+        appear behind or in front of this modal.
+      </p>
+      <div style="background: #F5F5F5; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+        <p style="margin-bottom: 8px;"><strong>Container Z-Index:</strong> <span id="modalContainerZ">10</span></p>
+        <p><strong>Modal Z-Index:</strong> <span id="modalModalZ">999</span></p>
+      </div>
+      <button class="btn btn-primary" onclick="closeModal()" style="width: 100%;">Close</button>
+    </div>
+  </div>
+
+  <div id="codeModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeCodeModal()">&times;</span>
+      <h2 style="margin-bottom: 16px;">Your Widget Code</h2>
+      <p style="margin-bottom: 12px; font-size: 12px; color: #757575;">
+        Copy this code and paste it before the closing &lt;/body&gt; tag in your HTML:
+      </p>
+      <div class="code-output">
+        <button class="copy-btn" onclick="copyCode()">Copy</button>
+        <pre id="generatedCode"></pre>
+      </div>
+      <button class="btn btn-primary" onclick="closeCodeModal()" style="width: 100%;">Done</button>
+    </div>
+  </div>
+
+  <script>
+    // EMOJI PRESETS
+    const EMOJI_PRESETS = {
+      party: ['🎉', '🎊', '🎁', '🎈', '🎀', '🥳', '🍾', '🎆'],
+      zen: ['🧘', '☮️', '🕉️', '☯️', '🌸', '🍃', '🦋', '🌺'],
+      maxCelebration: ['🎉', '🎊', '🎁', '🎈', '🎀', '✨', '🌟', '⭐', '💫', '🎆', '🎇', '🥳'],
+      birthday: ['🎂', '🎁', '🎈', '🎉', '🎊', '🕯️', '🧁', '🍰'],
+      vacation: ['🏖️', '🌴', '🌊', '☀️', '🍹', '🏝️', '⛱️', '🌅'],
+      vehicles: ['🚗', '🚕', '🚙', '🚌', '🚎', '🏎️', '🚓', '🚑', '🚒', '🚐'],
+      smileys: ['😀', '😃', '😄', '😁', '😆', '😅', '🤣', '😂', '🙂', '😊']
+    };
+
+    function loadPreset(presetName) {
+      const emojis = EMOJI_PRESETS[presetName];
+      document.getElementById('emojiInput').value = emojis.join(' ');
+      saveSettings();
+    }
+
+    // CONFIG
+    const parallaxConfig = {
+      layerProperties: {
+        front: {
+          speedRange: [0, 2],
+          blurRange: [1, 2],
+          zIndex: 3,
+          fontSizeRange: [48, 72],
+          delayRange: [0, 0.2]
+        },
+        middle: {
+          speedRange: [4, 6],
+          blurRange: [0, 0],
+          zIndex: 2,
+          fontSizeRange: [16, 32],
+          delayRange: [0, 0.1]
+        },
+        back: {
+          speedRange: [7, 10],
+          blurRange: [2, 3],
+          zIndex: 1,
+          fontSizeRange: [8, 14],
+          delayRange: [0, 0.2]
+        }
+      },
+      layerRatios: {
+        front: 100,
+        middle: 300,
+        back: 70
+      },
+      baseSpeed: 50
+    };
+
+    let parallaxEnabled = true;
+    let blurEnabled = false;
+    let activeEmojis = new Set();
+    let continuousInterval = null;
+
+    // HELPERS
+    const getRandomValue = (min, max) => Math.random() * (max - min) + min;
+
+    function getEmojisFromInput() {
+      const input = document.getElementById('emojiInput').value;
+      const emojiRegex = /\p{Emoji}/gu;
+      const matches = input.match(emojiRegex) || [];
+      return Array.from(new Set(matches));
+    }
+
+    function convertSpeedToFallDuration(speedValue) {
+      let { baseSpeed } = parallaxConfig;
+      baseSpeed = baseSpeed / (50 / 30);
+      if (baseSpeed === 0) return Number.POSITIVE_INFINITY;
+      const minDuration = 1;
+      const maxDuration = 10;
+      const fraction = speedValue / 10;
+      let baseDuration = fraction * (maxDuration - minDuration) + minDuration;
+      return baseDuration * (10 / baseSpeed);
+    }
+
+    function distributeEmojis(totalCount) {
+      const { layerRatios } = parallaxConfig;
+      const ratioSum = Object.values(layerRatios).reduce((a, b) => a + b, 0);
+      const distribution = {
+        front: Math.round((layerRatios.front / ratioSum) * totalCount),
+        middle: Math.round((layerRatios.middle / ratioSum) * totalCount),
+        back: Math.round((layerRatios.back / ratioSum) * totalCount),
+      };
+      return distribution;
+    }
+
+    function createDepthProperties(layerKey) {
+      const layerConfig = parallaxConfig.layerProperties[layerKey];
+      const randomSpeed = getRandomValue(...layerConfig.speedRange);
+      const fallDuration = convertSpeedToFallDuration(randomSpeed);
+      const blurAmount = getRandomValue(...layerConfig.blurRange);
+      const finalFontSize = getRandomValue(...layerConfig.fontSizeRange);
+      const randomDelay = getRandomValue(...layerConfig.delayRange);
+      return {
+        depth: layerKey,
+        finalFontSize,
+        fallDuration,
+        blurAmount,
+        delay: randomDelay,
+        zIndex: layerConfig.zIndex
+      };
+    }
+
+    function createEmoji(emojis, drop = false, layerKey = null) {
+      if (!emojis || emojis.length === 0) {
+        emojis = ['🎉'];
+      }
+      
+      const emojiChar = emojis[Math.floor(Math.random() * emojis.length)];
+      const xPosition = getRandomValue(0, window.innerWidth);
+      
+      if (!layerKey) {
+        if (parallaxEnabled) {
+          const ratioSum = Object.values(parallaxConfig.layerRatios).reduce((a, b) => a + b, 0);
+          const randomVal = getRandomValue(0, ratioSum);
+          let cumulative = 0;
+          for (let layer in parallaxConfig.layerRatios) {
+            cumulative += parallaxConfig.layerRatios[layer];
+            if (randomVal <= cumulative) {
+              layerKey = layer;
+              break;
+            }
+          }
+        } else {
+          layerKey = 'middle';
+        }
+      }
+      
+      const depthProps = createDepthProperties(layerKey);
+      const { finalFontSize, fallDuration, blurAmount, delay, zIndex } = depthProps;
+      
+      const emojiElement = document.createElement("div");
+      emojiElement.className = "emoji";
+      emojiElement.style.zIndex = zIndex;
+      
+      if (drop) {
+        emojiElement.style.left = `${xPosition}px`;
+      } else {
+        emojiElement.style.top = "50%";
+        emojiElement.style.left = "50%";
+        emojiElement.style.transform = "translate(-50%, -50%)";
+      }
+      
+      if (isFinite(fallDuration)) {
+        emojiElement.style.animationDuration = drop ? `${fallDuration}s` : `0s`;
+        emojiElement.style.animationDelay = `${drop ? delay : 0}s`;
+      } else {
+        emojiElement.style.animationName = "none";
+      }
+      
+      const emojiInner = document.createElement("div");
+      emojiInner.className = "emoji-inner";
+      emojiInner.textContent = emojiChar;
+      emojiInner.style.fontSize = `${finalFontSize}px`;
+      emojiInner.style.animationDuration = `${getRandomValue(2, 4)}s`;
+      
+      const finalBlur = blurEnabled ? blurAmount : 0;
+      emojiInner.style.filter = `blur(${finalBlur}px)`;
+      
+      emojiElement.appendChild(emojiInner);
+      
+      return emojiElement;
+    }
+
+    // ACTIONS
+    function makeItRain() {
+      const emojis = getEmojisFromInput();
+      const container = document.getElementById('emojiContainer');
+      const count = 20;
+      
+      if (parallaxEnabled) {
+        const distribution = distributeEmojis(count);
+        for (let layer in distribution) {
+          for (let i = 0; i < distribution[layer]; i++) {
+            const emoji = createEmoji(emojis, true, layer);
+            container.appendChild(emoji);
+            trackEmoji(emoji);
+          }
+        }
+      } else {
+        for (let i = 0; i < count; i++) {
+          const emoji = createEmoji(emojis, true, 'middle');
+          container.appendChild(emoji);
+          trackEmoji(emoji);
+        }
+      }
+    }
+
+    function dropSingle() {
+      const emojis = getEmojisFromInput();
+      const emoji = createEmoji(emojis, true);
+      document.getElementById('emojiContainer').appendChild(emoji);
+      trackEmoji(emoji);
+    }
+
+    function rainFew() {
+      const emojis = getEmojisFromInput();
+      const container = document.getElementById('emojiContainer');
+      const count = 5;
+      
+      if (parallaxEnabled) {
+        const distribution = distributeEmojis(count);
+        for (let layer in distribution) {
+          for (let i = 0; i < distribution[layer]; i++) {
+            const emoji = createEmoji(emojis, true, layer);
+            container.appendChild(emoji);
+            trackEmoji(emoji);
+          }
+        }
+      } else {
+        for (let i = 0; i < count; i++) {
+          const emoji = createEmoji(emojis, true, 'middle');
+          container.appendChild(emoji);
+          trackEmoji(emoji);
+        }
+      }
+    }
+
+    function clearAll() {
+      stopContinuous();
+      const container = document.getElementById('emojiContainer');
+      const emojis = container.querySelectorAll('.emoji');
+      
+      emojis.forEach((emoji, index) => {
+        const randomDelay = Math.random() * 1700;
+        const fadeOutDuration = getRandomValue(0.1, 0.3);
+        
+        setTimeout(() => {
+          emoji.style.transition = `opacity ${fadeOutDuration}s ease-out, filter ${fadeOutDuration}s ease-out`;
+          emoji.style.opacity = '0';
+          emoji.style.filter = 'blur(10px)';
+          
+          setTimeout(() => {
+            removeEmojiSafely(emoji);
+          }, fadeOutDuration * 1000);
+        }, randomDelay);
+      });
+    }
+
+    // CONTINUOUS MODE
+    function startContinuous() {
+      const spawnRate = parseInt(document.getElementById('spawnRate').value) || 5;
+      const maxEmojis = parseInt(document.getElementById('maxEmojis').value) || 100;
+      const emojis = getEmojisFromInput();
+      const container = document.getElementById('emojiContainer');
+      const interval = 1000 / spawnRate;
+      
+      continuousInterval = setInterval(() => {
+        if (activeEmojis.size >= maxEmojis) {
+          const oldest = Array.from(activeEmojis)[0];
+          removeEmojiSafely(oldest);
+        }
+        
+        const emoji = createEmoji(emojis, true);
+        container.appendChild(emoji);
+        trackEmoji(emoji);
+      }, interval);
+    }
+
+    function stopContinuous() {
+      if (continuousInterval) {
+        clearInterval(continuousInterval);
+        continuousInterval = null;
+      }
+    }
+
+    function trackEmoji(emoji) {
+      activeEmojis.add(emoji);
+      updateActiveCount();
+      
+      const duration = parseFloat(emoji.style.animationDuration) || 5;
+      const delay = parseFloat(emoji.style.animationDelay) || 0;
+      const totalTime = (duration + delay) * 1000 + 500;
+      
+      setTimeout(() => {
+        removeEmojiSafely(emoji);
+      }, totalTime);
+    }
+
+    function removeEmojiSafely(emoji) {
+      if (emoji && emoji.parentNode) {
+        activeEmojis.delete(emoji);
+        emoji.remove();
+        updateActiveCount();
+      }
+    }
+
+    function updateActiveCount() {
+      document.getElementById('activeCount').textContent = activeEmojis.size;
+    }
+
+    // MODAL
+    function openModal() {
+      document.getElementById('testModal').classList.add('active');
+      document.getElementById('modalContainerZ').textContent = document.getElementById('containerZIndex').value;
+      document.getElementById('modalModalZ').textContent = document.getElementById('modalZIndex').value;
+    }
+
+    function closeModal() {
+      document.getElementById('testModal').classList.remove('active');
+    }
+
+    function closeCodeModal() {
+      document.getElementById('codeModal').classList.remove('active');
+    }
+
+    // CODE GENERATION
+    function generateCode() {
+      const emojis = getEmojisFromInput();
+      const containerZIndex = document.getElementById('containerZIndex').value;
+      const baseSpeed = document.getElementById('baseSpeed').value;
+      const parallax = document.getElementById('parallaxCheckbox').checked;
+      const blur = document.getElementById('blurCheckbox').checked;
+      
+      const code = `<!-- Emoji Rain Widget -->
+<script src="https://cdn.jsdelivr.net/gh/jesperwilfing/emoji-rain@latest/dist/widget.min.js"></script>
+<script>
+  EmojiRain.init({
+    emojis: ${JSON.stringify(emojis)},
+    containerZIndex: ${containerZIndex},
+    baseSpeed: ${baseSpeed},
+    parallaxEnabled: ${parallax},
+    blurEnabled: ${blur}
+  });
+</script>`;
+
+      document.getElementById('generatedCode').textContent = code;
+      document.getElementById('codeModal').classList.add('active');
+    }
+
+    function copyCode() {
+      const code = document.getElementById('generatedCode').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        btn.textContent = '✓ Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // SETTINGS PERSISTENCE
+    const STORAGE_KEY = 'emojiRain_settings';
+
+    function saveSettings() {
+      const settings = {
+        emojis: document.getElementById('emojiInput').value,
+        containerZIndex: document.getElementById('containerZIndex').value,
+        modalZIndex: document.getElementById('modalZIndex').value,
+        baseSpeed: document.getElementById('baseSpeed').value,
+        parallax: document.getElementById('parallaxCheckbox').checked,
+        blur: document.getElementById('blurCheckbox').checked,
+        spawnRate: document.getElementById('spawnRate').value,
+        maxEmojis: document.getElementById('maxEmojis').value,
+        frontRatio: document.getElementById('frontRatio').value,
+        middleRatio: document.getElementById('middleRatio').value,
+        backRatio: document.getElementById('backRatio').value
+      };
+      
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+      } catch (e) {
+        console.warn('Failed to save settings:', e);
+      }
+    }
+
+    function loadSettings() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (!saved) return;
+        
+        const settings = JSON.parse(saved);
+        if (settings.emojis) document.getElementById('emojiInput').value = settings.emojis;
+        if (settings.containerZIndex) document.getElementById('containerZIndex').value = settings.containerZIndex;
+        if (settings.modalZIndex) document.getElementById('modalZIndex').value = settings.modalZIndex;
+        if (settings.baseSpeed) document.getElementById('baseSpeed').value = settings.baseSpeed;
+        if (settings.parallax !== undefined) document.getElementById('parallaxCheckbox').checked = settings.parallax;
+        if (settings.blur !== undefined) document.getElementById('blurCheckbox').checked = settings.blur;
+        if (settings.spawnRate) document.getElementById('spawnRate').value = settings.spawnRate;
+        if (settings.maxEmojis) document.getElementById('maxEmojis').value = settings.maxEmojis;
+        if (settings.frontRatio) document.getElementById('frontRatio').value = settings.frontRatio;
+        if (settings.middleRatio) document.getElementById('middleRatio').value = settings.middleRatio;
+        if (settings.backRatio) document.getElementById('backRatio').value = settings.backRatio;
+        
+        // Update config
+        parallaxEnabled = settings.parallax !== false;
+        blurEnabled = settings.blur === true;
+        parallaxConfig.baseSpeed = parseInt(settings.baseSpeed) || 50;
+        parallaxConfig.layerRatios.front = parseInt(settings.frontRatio) || 100;
+        parallaxConfig.layerRatios.middle = parseInt(settings.middleRatio) || 300;
+        parallaxConfig.layerRatios.back = parseInt(settings.backRatio) || 70;
+      } catch (e) {
+        console.warn('Failed to load settings:', e);
+      }
+    }
+
+    // EVENT LISTENERS
+    document.getElementById('parallaxCheckbox').addEventListener('change', (e) => {
+      parallaxEnabled = e.target.checked;
+      saveSettings();
+    });
+
+    document.getElementById('blurCheckbox').addEventListener('change', (e) => {
+      blurEnabled = e.target.checked;
+      saveSettings();
+    });
+
+    document.getElementById('baseSpeed').addEventListener('input', (e) => {
+      parallaxConfig.baseSpeed = parseInt(e.target.value) || 50;
+      saveSettings();
+    });
+
+    document.getElementById('continuousMode').addEventListener('change', (e) => {
+      if (e.target.checked) {
+        startContinuous();
+      } else {
+        stopContinuous();
+      }
+    });
+
+    document.getElementById('frontRatio').addEventListener('input', (e) => {
+      parallaxConfig.layerRatios.front = parseInt(e.target.value) || 100;
+      saveSettings();
+    });
+
+    document.getElementById('middleRatio').addEventListener('input', (e) => {
+      parallaxConfig.layerRatios.middle = parseInt(e.target.value) || 300;
+      saveSettings();
+    });
+
+    document.getElementById('backRatio').addEventListener('input', (e) => {
+      parallaxConfig.layerRatios.back = parseInt(e.target.value) || 70;
+      saveSettings();
+    });
+
+    document.getElementById('emojiInput').addEventListener('input', saveSettings);
+    document.getElementById('containerZIndex').addEventListener('input', saveSettings);
+    document.getElementById('modalZIndex').addEventListener('input', saveSettings);
+    document.getElementById('spawnRate').addEventListener('input', saveSettings);
+    document.getElementById('maxEmojis').addEventListener('input', saveSettings);
+
+    // INIT
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSettings();
+    });
+  </script>
+</body>
+</html>
