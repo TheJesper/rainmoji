@@ -1,7 +1,7 @@
 {
-    "name": "emoji-rain-parallax",
+    "name": "rainmoji",
     "version": "1.0.0",
-    "description": "A performant React component for creating beautiful emoji rain animations with parallax effects.",
+    "description": "Beautiful emoji rain animations for any website. Zero dependencies. 5KB gzipped.",
     "main": "dist/emojiRain.js",
     "module": "dist/emojiRain.esm.js",
     "types": "dist/index.d.ts",
@@ -21,13 +21,13 @@
         "component",
         "typescript"
     ],
-    "homepage": "https://github.com/jesperwilfing/emoji-rain-parallax#readme",
+    "homepage": "https://rainmoji.vs-code.com",
     "bugs": {
-        "url": "https://github.com/jesperwilfing/emoji-rain-parallax/issues"
+        "url": "https://github.com/TheJesper/rainmoji/issues"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/jesperwilfing/emoji-rain-parallax.git"
+        "url": "git+https://github.com/TheJesper/rainmoji.git"
     },
     "scripts": {
         "menu": "node scripts/menu.js",
@@ -47,7 +47,7 @@
         "z-index-demo": "npx webpack serve --mode development --open z-index-demo.html",
         "prepublishOnly": "npm run lint && npm run typecheck && npm run build:all"
     },
-    "author": "Conzeon AB Jesper Wilfing <2024>",
+    "author": "Jesper Wilfing <jesper@conzeon.com> (https://conzeon.com)",
     "license": "MIT",
     "peerDependencies": {
         "react": ">=16.8.0",
