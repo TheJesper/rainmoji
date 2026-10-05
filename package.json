@@ -1,0 +1,105 @@
+{
+  "name": "@thejesper/rainmoji",
+  "version": "1.1.0",
+  "description": "Lightweight emoji rain widget and React component. Widget: 7.2KB minified, about 2.7KB gzipped.",
+  "main": "dist/emojiRain.js",
+  "module": "dist/emojiRain.esm.mjs",
+  "types": "dist/lib.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/lib.d.ts",
+      "import": "./dist/emojiRain.esm.mjs",
+      "require": "./dist/emojiRain.js"
+    },
+    "./widget": "./dist/widget.min.js"
+  },
+  "files": [
+    "dist/emojiRain.js",
+    "dist/emojiRain.esm.mjs",
+    "dist/widget.min.js",
+    "dist/lib.d.ts",
+    "dist/components/**/*.d.ts",
+    "dist/config/**/*.d.ts",
+    "dist/constants/**/*.d.ts",
+    "dist/hooks/**/*.d.ts",
+    "dist/types/**/*.d.ts",
+    "dist/utils/**/*.d.ts",
+    "src",
+    "rainmoji-logo.png",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "react",
+    "emoji",
+    "animation",
+    "parallax",
+    "rain",
+    "effect",
+    "component",
+    "typescript"
+  ],
+  "homepage": "https://rainmoji.vs-code.com",
+  "bugs": {
+    "url": "https://github.com/TheJesper/rainmoji/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheJesper/rainmoji.git"
+  },
+  "scripts": {
+    "menu": "node scripts/menu.js",
+    "start": "npx webpack serve --mode development",
+    "build": "npx webpack --config webpack.lib.config.js",
+    "build:demo": "npx webpack --config webpack.prod.config.js",
+    "build:dev": "npx webpack --mode development",
+    "build:analyze": "npx webpack --config webpack.prod.config.js --analyze",
+    "build:widget": "npx webpack --config webpack.widget.config.js",
+    "build:all": "npm run build && npm run build:widget",
+    "widget-demo": "npx webpack serve --mode development --open widget-demo.html",
+    "lint": "npx eslint . --ext .ts,.tsx",
+    "lint:fix": "npx eslint . --ext .ts,.tsx --fix",
+    "typecheck": "npx tsc --noEmit",
+    "test": "node --test",
+    "demo": "npx webpack serve --mode development",
+    "original-demo-direct": "node scripts/runOriginalDemo.js",
+    "z-index-demo": "npx webpack serve --mode development --open z-index-demo.html",
+    "prepublishOnly": "npm run typecheck && npm run build:all",
+    "agent": "claude --dangerously-skip-permissions",
+    "agents": "node scripts/agents-menu.js",
+    "agents:list": "node scripts/agents-menu.js list"
+  },
+  "author": "Jesper Wilfing <jesper@conzeon.com> (https://conzeon.com)",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-react": "^7.26.0",
+    "@babel/preset-typescript": "^7.26.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.38.0",
+    "@typescript-eslint/parser": "^8.38.0",
+    "css-loader": "^7.1.2",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.0",
+    "eslint-plugin-react": "^7.36.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "html-webpack-plugin": "^5.6.3",
+    "jsdom": "^29.1.1",
+    "prettier": "^3.6.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.8.0",
+    "webpack": "^5.101.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^6.0.0"
+  }
+}

@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emoji Rain - Widget Generator 🌧️</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 3.5em;
+      margin-bottom: 10px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .header p {
+      font-size: 1.3em;
+      opacity: 0.95;
+    }
+
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    @media (max-width: 968px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+      color: #667eea;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .settings-group {
+      margin-bottom: 25px;
+    }
+
+    .settings-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .settings-group input[type="text"],
+    .settings-group input[type="number"],
+    .settings-group select,
+    .settings-group textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+
+    .settings-group input:focus,
+    .settings-group select:focus,
+    .settings-group textarea:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .settings-group textarea {
+      min-height: 80px;
+      resize: vertical;
+      font-family: monospace;
+    }
+
+    .emoji-input {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .emoji-input input {
+      flex: 1;
+    }
+
+    .emoji-preview {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      min-height: 60px;
+      margin-top: 10px;
+    }
+
+    .emoji-tag {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .emoji-tag:hover {
+      transform: scale(1.1);
+    }
+
+    .emoji-tag .remove {
+      font-size: 16px;
+      opacity: 0.8;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: center;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+
+    .btn-secondary {
+      background: #f8f9fa;
+      color: #333;
+      border: 2px solid #e0e0e0;
+    }
+
+    .btn-secondary:hover {
+      background: #e9ecef;
+    }
+
+    .code-output {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 12px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 20px 0;
+      position: relative;
+    }
+
+    .code-output pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      padding: 8px 16px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: #764ba2;
+    }
+
+    .copy-btn.copied {
+      background: #28a745;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 999;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      z-index: 1000;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      font-size: 28px;
+      cursor: pointer;
+      color: #999;
+      transition: color 0.3s;
+    }
+
+    .modal-close:hover {
+      color: #333;
+    }
+
+    .test-buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .slider-container input[type="range"] {
+      flex: 1;
+    }
+
+    .slider-value {
+      min-width: 50px;
+      text-align: center;
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    .info-box {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+      border: 2px solid rgba(102, 126, 234, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .info-box h3 {
+      color: #667eea;
+      margin-bottom: 12px;
+      font-size: 1.2em;
+    }
+
+    .info-box ul {
+      margin-left: 20px;
+      color: #555;
+    }
+
+    .info-box li {
+      margin: 8px 0;
+    }
+
+    .preview-box {
+      border: 3px dashed #667eea;
+      border-radius: 15px;
+      padding: 40px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+      margin: 20px 0;
+    }
+
+    .preview-box p {
+      color: #666;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Emoji Rain Container (will be injected by the component) -->
+  <div id="emoji-root"></div>
+
+  <div class="container">
+    <div class="header">
+      <h1>🌧️ Emoji Rain Widget Generator</h1>
+      <p>Create your custom emoji rain effect in seconds!</p>
+    </div>
+
+    <div class="main-content">
+      <!-- Configuration Panel -->
+      <div class="card">
+        <h2>⚙️ Configuration</h2>
+
+        <div class="settings-group">
+          <label>Emojis (comma-separated)</label>
+          <div class="emoji-input">
+            <input 
+              type="text" 
+              id="emojiInput" 
+              placeholder="🌟, 💫, ✨, 🎉"
+              value="🌟, 💫, ✨, 🎉, 🎊, ⭐, 🌈"
+            >
+            <button class="btn btn-secondary" onclick="addEmojis()">Add</button>
+          </div>
+          <div class="emoji-preview" id="emojiPreview"></div>
+        </div>
+
+        <div class="settings-group">
+          <label>Container Z-Index</label>
+          <div class="slider-container">
+            <input 
+              type="range" 
+              id="containerZIndex" 
+              min="0" 
+              max="999999" 
+              value="10"
+              step="10"
+            >
+            <span class="slider-value" id="containerZIndexValue">10</span>
+          </div>
+          <small style="color: #666;">Control where emojis appear in your page's layer stack</small>
+        </div>
+
+        <div class="settings-group">
+          <label>Modal Z-Index (for testing)</label>
+          <div class="slider-container">
+            <input 
+              type="range" 
+              id="modalZIndex" 
+              min="0" 
+              max="999999" 
+              value="999"
+              step="10"
+            >
+            <span class="slider-value" id="modalZIndexValue">999</span>
+          </div>
+          <small style="color: #666;">Adjust modal z-index to test layering with emojis</small>
+        </div>
+
+        <div class="settings-group">
+          <label>Base Speed (0-100)</label>
+          <div class="slider-container">
+            <input 
+              type="range" 
+              id="baseSpeed" 
+              min="0" 
+              max="100" 
+              value="50"
+            >
+            <span class="slider-value" id="baseSpeedValue">50</span>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <label>Show Controls</label>
+          <select id="showControls">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+
+        <div class="settings-group">
+          <label>Auto Play</label>
+          <select id="autoPlay">
+            <option value="false">No</option>
+            <option value="true">Yes</option>
+          </select>
+        </div>
+
+        <div class="settings-group">
+          <label>Parallax Effect</label>
+          <select id="parallaxEnabled">
+            <option value="true">Enabled</option>
+            <option value="false">Disabled</option>
+          </select>
+        </div>
+
+        <div class="settings-group">
+          <label>Blur Effect</label>
+          <select id="blurEnabled">
+            <option value="true">Enabled</option>
+            <option value="false">Disabled</option>
+          </select>
+        </div>
+
+        <div class="info-box">
+          <h3>💡 Pro Tips</h3>
+          <ul>
+            <li>Adjust z-index to control layering with your content</li>
+            <li>Use 5-10 emojis for best visual variety</li>
+            <li>Disable controls for production sites</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Widget Code Panel -->
+      <div class="card">
+        <h2>📦 Your Widget Code</h2>
+
+        <div class="preview-box">
+          <p>Click "Generate Code" to create your embeddable widget!</p>
+          <button class="btn btn-primary" onclick="generateCode()" style="font-size: 16px; padding: 15px 30px;">
+            ✨ Generate Widget Code
+          </button>
+        </div>
+
+        <div id="codeSection" style="display: none;">
+          <h3 style="margin-bottom: 15px; color: #333;">Copy & Paste This Code:</h3>
+          
+          <div class="code-output">
+            <button class="copy-btn" onclick="copyCode()">Copy</button>
+            <pre id="generatedCode"></pre>
+          </div>
+
+          <div class="info-box">
+            <h3>🚀 How to Use</h3>
+            <ul>
+              <li>Copy the code above</li>
+              <li>Paste it anywhere in your HTML (before closing &lt;/body&gt; tag recommended)</li>
+              <li>That's it! Your emoji rain will work instantly</li>
+            </ul>
+          </div>
+
+          <h3 style="margin: 25px 0 15px; color: #333;">Test It Now:</h3>
+          <div class="test-buttons">
+            <button class="btn btn-primary" onclick="testRain()">🌧️ Make it Rain!</button>
+            <button class="btn btn-secondary" onclick="testSingle()">💫 Single Emoji</button>
+            <button class="btn btn-secondary" onclick="testClear()">🧹 Clear All</button>
+            <button class="btn btn-secondary" onclick="openModal()">🎭 Test Modal</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Test Modal -->
+  <div id="testModal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      <h2 style="color: #667eea; margin-bottom: 20px;">🎭 Modal Z-Index Test</h2>
+      <p style="margin-bottom: 20px; color: #555;">
+        This modal demonstrates z-index layering. Adjust both z-index values to see how emojis 
+        layer with this modal. If the container z-index is lower than the modal z-index, 
+        emojis will appear <strong>behind</strong> this modal.
+      </p>
+      <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+        <p style="color: #333; font-size: 16px; margin-bottom: 10px;">
+          <strong>📦 Container Z-Index:</strong> <span id="modalContainerZDisplay" style="color: #667eea; font-size: 20px;">10</span>
+        </p>
+        <p style="color: #333; font-size: 16px;">
+          <strong>🎭 Modal Z-Index:</strong> <span id="modalModalZDisplay" style="color: #764ba2; font-size: 20px;">999</span>
+        </p>
+      </div>
+      <p style="color: #666; font-size: 14px; line-height: 1.6;">
+        <strong>💡 Try this:</strong><br>
+        • Set Container Z-Index to 10 and Modal to 999 → Emojis behind modal<br>
+        • Set Container Z-Index to 1000 and Modal to 999 → Emojis in front of modal<br>
+        • Click "Make it Rain" while this modal is open to test!
+      </p>
+      <button class="btn btn-primary" onclick="closeModal()" style="margin-top: 20px; width: 100%;">
+        Close Modal
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // ========== SETTINGS PERSISTENCE ==========
+    const STORAGE_KEY = 'emojiRain_settings';
+    const CUSTOM_EMOJIS_KEY = 'emojiRain_customEmojis';
+
+    // Load settings from localStorage
+    function loadSettings() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          const settings = JSON.parse(saved);
+          
+          // Apply saved settings to form
+          if (settings.containerZIndex !== undefined) {
+            document.getElementById('containerZIndex').value = settings.containerZIndex;
+            document.getElementById('containerZIndexValue').textContent = settings.containerZIndex;
+          }
+          if (settings.modalZIndex !== undefined) {
+            document.getElementById('modalZIndex').value = settings.modalZIndex;
+            document.getElementById('modalZIndexValue').textContent = settings.modalZIndex;
+          }
+          if (settings.baseSpeed !== undefined) {
+            document.getElementById('baseSpeed').value = settings.baseSpeed;
+            document.getElementById('baseSpeedValue').textContent = settings.baseSpeed;
+          }
+          if (settings.showControls !== undefined) {
+            document.getElementById('showControls').value = settings.showControls;
+          }
+          if (settings.autoPlay !== undefined) {
+            document.getElementById('autoPlay').value = settings.autoPlay;
+          }
+          if (settings.parallaxEnabled !== undefined) {
+            document.getElementById('parallaxEnabled').value = settings.parallaxEnabled;
+          }
+          if (settings.blurEnabled !== undefined) {
+            document.getElementById('blurEnabled').value = settings.blurEnabled;
+          }
+        }
+
+        // Load custom emojis
+        const savedEmojis = localStorage.getItem(CUSTOM_EMOJIS_KEY);
+        if (savedEmojis) {
+          emojiList = JSON.parse(savedEmojis);
+        }
+      } catch (error) {
+        console.warn('Failed to load settings:', error);
+      }
+    }
+
+    // Save settings to localStorage
+    function saveSettings() {
+      try {
+        const settings = {
+          containerZIndex: document.getElementById('containerZIndex').value,
+          modalZIndex: document.getElementById('modalZIndex').value,
+          baseSpeed: document.getElementById('baseSpeed').value,
+          showControls: document.getElementById('showControls').value,
+          autoPlay: document.getElementById('autoPlay').value,
+          parallaxEnabled: document.getElementById('parallaxEnabled').value,
+          blurEnabled: document.getElementById('blurEnabled').value
+        };
+        
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+        localStorage.setItem(CUSTOM_EMOJIS_KEY, JSON.stringify(emojiList));
+      } catch (error) {
+        console.warn('Failed to save settings:', error);
+      }
+    }
+
+    // Auto-save on any change
+    function setupAutoSave() {
+      const inputs = document.querySelectorAll('input, select');
+      inputs.forEach(input => {
+        input.addEventListener('change', saveSettings);
+      });
+    }
+
+    // ========== EMOJI MANAGEMENT ==========
+    // Emoji management
+    let emojiList = ['🌟', '💫', '✨', '🎉', '🎊', '⭐', '🌈'];
+    
+    function updateEmojiPreview() {
+      const preview = document.getElementById('emojiPreview');
+      preview.innerHTML = emojiList.map((emoji, idx) => `
+        <div class="emoji-tag" onclick="removeEmoji(${idx})">
+          <span>${emoji}</span>
+          <span class="remove">✕</span>
+        </div>
+      `).join('');
+    }
+
+    function addEmojis() {
+      const input = document.getElementById('emojiInput');
+      const newEmojis = input.value.split(',').map(e => e.trim()).filter(e => e);
+      emojiList = [...new Set([...emojiList, ...newEmojis])]; // Remove duplicates
+      input.value = '';
+      updateEmojiPreview();
+      saveSettings(); // Save after adding emojis
+    }
+
+    function removeEmoji(index) {
+      emojiList.splice(index, 1);
+      updateEmojiPreview();
+      saveSettings(); // Save after removing emoji
+    }
+
+    // Z-Index sliders
+    document.getElementById('containerZIndex').addEventListener('input', (e) => {
+      const value = e.target.value;
+      document.getElementById('containerZIndexValue').textContent = value;
+      document.getElementById('modalContainerZDisplay').textContent = value;
+      
+      // Apply z-index to emoji container if it exists
+      const emojiContainer = document.querySelector('.rain-container');
+      if (emojiContainer) {
+        emojiContainer.style.zIndex = value;
+      }
+    });
+
+    document.getElementById('modalZIndex').addEventListener('input', (e) => {
+      const value = e.target.value;
+      document.getElementById('modalZIndexValue').textContent = value;
+      document.getElementById('modalModalZDisplay').textContent = value;
+      
+      // Apply z-index to modal content
+      const modalContent = document.querySelector('.modal-content');
+      if (modalContent) {
+        modalContent.style.zIndex = value;
+      }
+    });
+
+    // Speed slider
+    document.getElementById('baseSpeed').addEventListener('input', (e) => {
+      document.getElementById('baseSpeedValue').textContent = e.target.value;
+    });
+
+    // Generate widget code
+    function generateCode() {
+      const containerZIndex = document.getElementById('containerZIndex').value;
+      const baseSpeed = document.getElementById('baseSpeed').value;
+      const showControls = document.getElementById('showControls').value;
+      const autoPlay = document.getElementById('autoPlay').value;
+      const parallaxEnabled = document.getElementById('parallaxEnabled').value;
+      const blurEnabled = document.getElementById('blurEnabled').value;
+
+      const emojiArray = JSON.stringify(emojiList);
+
+      const code = `<!-- Emoji Rain Widget -->
+<script src="https://cdn.jsdelivr.net/gh/yourusername/emoji-rain-parallax@latest/dist/widget.min.js"><\/script>
+<script>
+  EmojiRain.init({
+    emojis: ${emojiArray},
+    containerZIndex: ${containerZIndex},
+    baseSpeed: ${baseSpeed},
+    showControls: ${showControls},
+    autoPlay: ${autoPlay},
+    parallaxEnabled: ${parallaxEnabled},
+    blurEnabled: ${blurEnabled}
+  });
+<\/script>`;
+
+      document.getElementById('generatedCode').textContent = code;
+      document.getElementById('codeSection').style.display = 'block';
+      
+      // Scroll to code
+      document.getElementById('codeSection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // Copy code to clipboard
+    function copyCode() {
+      const code = document.getElementById('generatedCode').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        const btn = document.querySelector('.copy-btn');
+        const originalText = btn.textContent;
+        btn.textContent = '✓ Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = originalText;
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+
+    // Test functions (These will be connected to the actual React component)
+    function testRain() {
+      if (window.emojiRainInstance) {
+        // Trigger rain through the React component
+        console.log('Triggering rain...');
+      }
+    }
+
+    function testSingle() {
+      if (window.emojiRainInstance) {
+        console.log('Dropping single emoji...');
+      }
+    }
+
+    function testClear() {
+      if (window.emojiRainInstance) {
+        console.log('Clearing emojis...');
+      }
+    }
+
+    // Modal functions
+    function openModal() {
+      document.getElementById('testModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('testModal').classList.remove('active');
+    }
+
+    // ========== INITIALIZATION ==========
+    // Initialize on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      loadSettings();        // Load saved settings
+      updateEmojiPreview();  // Update emoji display
+      setupAutoSave();       // Setup auto-save listeners
+      
+      // Update modal displays with initial values
+      document.getElementById('modalContainerZDisplay').textContent = 
+        document.getElementById('containerZIndex').value;
+      document.getElementById('modalModalZDisplay').textContent = 
+        document.getElementById('modalZIndex').value;
+    });
+  </script>
+</body>
+</html>
